@@ -25,7 +25,9 @@ exports.getVoter = async (req, res) => {
 // Q3 List All Voters
 exports.listVoters = async (req, res) => {
   const all = db.select().from(voters).all();
-  res.status(223).json({ voters: all });
+  // Only include voter_id, name, and age in the response
+  const filtered = all.map(({ voter_id, name, age }) => ({ voter_id, name, age }));
+  res.status(223).json({ voters: filtered });
 };
 
 // Q4 Update Voter Info
@@ -35,7 +37,7 @@ exports.updateVoter = async (req, res) => {
   if (age < 18) return res.status(422).json({ message: `invalid age: ${age}, must be 18 or older` });
 
   db.update(voters).set({ name, age }).where(eq(voters.voter_id, voter_id)).run();
-  res.json({ voter_id, name, age });
+  res.json({ name, age });
 };
 
 // Q5 Delete Voter
