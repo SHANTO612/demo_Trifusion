@@ -1,18 +1,18 @@
 const express = require("express");
+const bodyParser = require("body-parser");
+
+const voterRoutes = require("./routes/voterRoutes");
+// later: candidateRoutes, voteRoutes, ballotRoutes, auditRoutes
+
 const app = express();
-const PORT = 8000;
+app.use(bodyParser.json());
 
-app.use(express.json());
+// Voter APIs
+app.use("/api/voters", voterRoutes);
 
-// Routes
-const membersRoutes = require("./routes/membersRoutes");
-const booksRoutes = require("./routes/booksRoutes");
-const borrowRoutes = require("./routes/borrowRoutes");
+// TODO: add candidates, votes, ballots, audits
 
-app.use("/api", borrowRoutes);
-app.use("/api/members", membersRoutes);
-app.use("/api/books", booksRoutes);
-
+const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Voting API running at http://localhost:${PORT}`);
 });

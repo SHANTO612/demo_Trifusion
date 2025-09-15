@@ -1,50 +1,56 @@
 const { sqliteTable, integer, text, real } = require("drizzle-orm/sqlite-core");
 
-// Members table
-const members = sqliteTable("members", {
-    member_id: integer("member_id").primaryKey({ autoIncrement: true }),
-    name: text("name").notNull(),
-    age: integer("age").notNull(),
-    has_borrowed: integer("has_borrowed").notNull().default(0), // 0 = false, 1 = true
+// Voters
+const voters = sqliteTable("voters", {
+  voter_id: integer("voter_id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  age: integer("age").notNull(),
+  has_voted: integer("has_voted").notNull().default(0),
+  profile_complete: integer("profile_complete").notNull().default(0)
 });
 
-// Books table
-const books = sqliteTable("books", {
-    book_id: integer("book_id").primaryKey({ autoIncrement: true }),
-    title: text("title").notNull(),
-    author: text("author").notNull(),
-    isbn: text("isbn").notNull(),
-    is_available: integer("is_available").notNull().default(1), // 1 = true, 0 = false
-    category: text("category"),
-    published_date: text("published_date"),
-    rating: real("rating"),
-    borrowing_count: integer("borrowing_count").default(0),
-    popularity_score: real("popularity_score").default(0),
+// Candidates
+const candidates = sqliteTable("candidates", {
+  candidate_id: integer("candidate_id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  party: text("party"),
+  created_at: text("created_at").default("CURRENT_TIMESTAMP")
 });
 
-// Transactions table
-const transactions = sqliteTable("transactions", {
-    transaction_id: integer("transaction_id").primaryKey({ autoIncrement: true }),
-    member_id: integer("member_id").notNull(),
-    book_id: integer("book_id").notNull(),
-    borrowed_at: text("borrowed_at").notNull(),
-    returned_at: text("returned_at"),
-    due_date: text("due_date"), // <-- Add this
-    status: text("status").notNull(),
+// Votes
+const votes = sqliteTable("votes", {
+  vote_id: integer("vote_id").primaryKey({ autoIncrement: true }),
+  voter_id: integer("voter_id").notNull(),
+  candidate_id: integer("candidate_id").notNull(),
+  weight: real("weight").notNull().default(1.0),
+  cast_at: text("cast_at").default("CURRENT_TIMESTAMP")
 });
 
-// Reservations table
-const reservations = sqliteTable("reservations", {
-    reservation_id: text("reservation_id").primaryKey(),
-    member_id: integer("member_id").notNull(),
-    book_id: integer("book_id").notNull(),
-    created_at: text("created_at").notNull(),
-    expires_at: text("expires_at").notNull(),
-    reservation_status: text("reservation_status").notNull(),
-    queue_position: integer("queue_position").notNull(),
-    priority_score: real("priority_score").notNull(),
-    reservation_type: text("reservation_type").notNull(),
-    fee_paid: real("fee_paid").notNull(),
+// Ranked-choice ballots
+const rankedVotes = sqliteTable("ranked_votes", {
+  ranked_vote_id: integer("ranked_vote_id").primaryKey({ autoIncrement: true }),
+  voter_id: integer("voter_id").notNull(),
+  candidate_id: integer("candidate_id").notNull(),
+  rank: integer("rank").notNull(),
+  created_at: text("created_at").default("CURRENT_TIMESTAMP")
 });
 
-module.exports = { members, books, transactions, reservations };
+// Encrypted ballots
+const encryptedBallots = sqliteTable("encrypted_ballots", {
+  ballot_id: text("ballot_id").primaryKey(),
+  voter_id: integer("voter_id").notNull(),
+  encrypted_vote: text("encrypted_vote").notNull(),
+  nullifier: text("nullifier").unique().notNull(),
+  zk_proof: text("zk_proof").notNull(),
+  created_at: text("created_at").default("CURRENT_TIMESTAMP")
+});
+
+// Audits
+const auditLogs = sqliteTable("audit_logs", {
+  audit_id: integer("audit_id").primaryKey({ autoIncrement: true }),
+  action: text("action").notNull(),
+  details: text("details"),
+  created_at: text("created_at").default("CURRENT_TIMESTAMP")
+});
+
+module.exports = { voters, candidates, votes, rankedVotes, encryptedBallots, auditLogs };
