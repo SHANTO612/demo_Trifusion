@@ -19,7 +19,14 @@ exports.getVoter = async (req, res) => {
   const voter = db.select().from(voters).where(eq(voters.voter_id, voter_id)).get();
   if (!voter) return res.status(417).json({ message: `voter with id: ${voter_id} was not found` });
 
-  res.status(222).json(voter);
+  // Only return voter_id, name, age, and has_voted as boolean
+  const result = {
+    voter_id: voter.voter_id,
+    name: voter.name,
+    age: voter.age,
+    has_voted: Boolean(voter.has_voted)
+  };
+  res.status(222).json(result);
 };
 
 // Q3 List All Voters
