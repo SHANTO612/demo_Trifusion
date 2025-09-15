@@ -1,0 +1,26 @@
+# Node modules (reinstalled inside Docker)
+node_modules
+
+# Logs
+*.log
+npm-debug.log
+yarn-error.log
+
+# Git files
+.git
+.gitignore
+
+# Docker files
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Env files (keep secrets out of image)
+.env
+.env.local
+
+# OS / Editor stuff
+.DS_Store
+Thumbs.db
+.vscode
+.idea
